@@ -39,12 +39,6 @@ public class RobotContainer {
 
   private final Joystick joystick = new Joystick(1);
 
-  {
-  Command driveCommand = new RunCommand(
-      () -> drivetrain.arcadeDrive(-joystick.getY(), joystick.getZ()), drivetrain);
-
-  drivetrain.setDefaultCommand(driveCommand);
-  }
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
