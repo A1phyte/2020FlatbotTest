@@ -15,6 +15,7 @@ import frc.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -72,13 +73,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    double start = Timer.getFPGATimestamp();
+    
     var feedforward = new SimpleMotorFeedforward(AutoConstants.S, AutoConstants.V, AutoConstants.A);
 
     var config = new TrajectoryConfig(DrivetrainConstants.MAX_SPEED, DrivetrainConstants.MAX_ACCELERATION);
 
     var trajectory = TrajectoryGenerator.generateTrajectory(Arrays.asList(new Pose2d(), new Pose2d(1, 0, new Rotation2d())), config);
 
-    return new RamseteCommand(
+    var autoCommand = new RamseteCommand(
         trajectory, 
         drivetrain::getPose, 
         new RamseteController(AutoConstants.B, AutoConstants.ZETA), 
@@ -89,5 +92,10 @@ public class RobotContainer {
         new PIDController(AutoConstants.P, AutoConstants.I, AutoConstants.D), 
         drivetrain::tankDriveVolts, 
         drivetrain);
+
+    System.out.println("Trajectory generated in: " + (Timer.getFPGATimestamp() - start) * 1000 + "ms");
+
+    return autoCommand;
   }
+
 }
